@@ -13,38 +13,49 @@
 
  */
 
+#include <Arduino.h>
 #include <Wire.h>
 #include "HTU21D.h"
+#include <avr/sleep.h>
 
 //Create an instance of the object
 HTU21D myHumidity;
 
-unsigned long previousTime = millis();
+unsigned long Interval = 15000;   // Interval for readouts (in ms)
+unsigned long Duration = 60;      // Duration of the test (in min)
+unsigned long startTime, currentTime, previousTime = -Interval;
+
+double humd = myHumidity.readHumidity();
+double temp = myHumidity.readTemperature();
+double now = (currentTime - startTime) / 1000.0;
 
 void setup()
 {
   Serial.begin(9600);
   // Serial.println("Lets Go");
-
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   myHumidity.begin();
+  startTime = millis();
 }
 
 void loop()
 {
-  unsigned long currentTime = millis();
-  float humd = myHumidity.readHumidity();
-  float temp = myHumidity.readTemperature();
-  float now = (currentTime - previousTime) / 1000;
-
-  // Serial.print("Time:");
-  Serial.println(now);
-  // Serial.print(" ");
-  Serial.println(temp, 1);
-  // Serial.print("C");
-  // Serial.print(" ");
-  Serial.println(humd, 1);
-  // Serial.print("%");
-
-  // Serial.println();
-  delay(15000);
+  currentTime = millis();
+  if (now < Duration * 60){
+    if (currentTime - previousTime > Interval){
+    previousTime = millis();
+    // Serial.print("Time:");
+    Serial.println(now);
+    // Serial.print(" ");
+    Serial.println(temp, 1);
+    // Serial.print("C");
+    // Serial.print(" ");
+    Serial.println(humd, 1);
+    // Serial.print("%");
+    // Serial.println();
+    }
+  }
+  else{
+    sleep_mode();
+  }
 }
