@@ -22,7 +22,7 @@
 HTU21D myHumidity;
 
 unsigned long Interval = 15000;   // Interval for readouts (in ms)
-unsigned long Duration = 180;      // Duration of the test (in min)
+unsigned long Duration = 120;      // Duration of the test (in min)
 unsigned long startTime, currentTime, previousTime = -Interval;
 
 double humd, temp, now;
