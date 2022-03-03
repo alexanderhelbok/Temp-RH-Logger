@@ -15,19 +15,17 @@
 
 #include <Arduino.h>
 #include <Wire.h>
-#include "HTU21D.h"
 #include <avr/sleep.h>
+#include "HTU21D.h"
 
 //Create an instance of the object
 HTU21D myHumidity;
 
 unsigned long Interval = 15000;   // Interval for readouts (in ms)
-unsigned long Duration = 60;      // Duration of the test (in min)
+unsigned long Duration = 180;      // Duration of the test (in min)
 unsigned long startTime, currentTime, previousTime = -Interval;
 
-double humd = myHumidity.readHumidity();
-double temp = myHumidity.readTemperature();
-double now = (currentTime - startTime) / 1000.0;
+double humd, temp, now;
 
 void setup()
 {
@@ -41,9 +39,12 @@ void setup()
 void loop()
 {
   currentTime = millis();
+  now = (currentTime - startTime) / 1000.0;
   if (now < Duration * 60){
     if (currentTime - previousTime > Interval){
     previousTime = millis();
+    humd = myHumidity.readHumidity();
+    temp = myHumidity.readTemperature();
     // Serial.print("Time:");
     Serial.println(now);
     // Serial.print(" ");
